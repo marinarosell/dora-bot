@@ -316,7 +316,22 @@ def main():
     app.job_queue.run_daily(
         daily_digest, time=time(hour=9, minute=00, tzinfo=TZ))
 
-    app.run_polling(close_loop=False)
+    # app.run_polling(close_loop=False)
+
+    # --- Webhook setup for Render ---
+    port = int(os.environ.get("PORT", "10000"))
+    base_url = os.environ.get("RENDER_EXTERNAL_URL")  # Render sets this
+    secret = os.environ["WEBHOOK_SECRET"]             # set in Render dashboard
+
+    # PTB will bind a web server on 0.0.0.0:$PORT and set the Telegram webhook
+    app.run_webhook(
+        listen="0.0.0.0",
+        port=port,
+        url_path=secret,                         # hide the token; use your secret path
+        webhook_url=f"{base_url}/{secret}",      # public https URL
+        drop_pending_updates=True,
+        close_loop=False,
+    )
 
 
 if __name__ == "__main__":

@@ -1,5 +1,5 @@
 services:
-  - type: worker
+  - type: web
     name: dora-telegram-bot
     env: python
     plan: free
@@ -17,3 +17,5 @@ services:
         value: "23:00"
       - key: QUIET_END
         value: "07:30"
+      - key: WEBHOOK_SECRET
+        sync: false
